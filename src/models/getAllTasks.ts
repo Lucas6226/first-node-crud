@@ -1,7 +1,12 @@
-import connection from "./connection";
+import type { CreatedTask } from "./createTask";
+import { prisma } from "../database/prismaClient";
 
+export default async (): Promise<CreatedTask[] | Error> => {
+  const tasks = await prisma.tasks.findMany()
 
-export default async () => {
-   const tasks = await connection.execute('SELECT * FROM tasks');
-   return tasks[0];
-}
+  if (tasks instanceof Error) {
+    return new Error("Database error")
+  }
+  
+  return tasks;
+};

@@ -1,0 +1,15 @@
+meta {
+  name: update task
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://localhost:3000/tasks/2
+  body: json
+  auth: none
+}
+
+body:json {
+  {"newStatus": "finalizado"}
+}

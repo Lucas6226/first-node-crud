@@ -1,14 +1,23 @@
-import connection from "./connection";
+import { prisma } from "../database/prismaClient";
+import { CreatedTask } from "./types"
 
-/**
- * @param param0 string
- * @returns object
- * @example createTask(title: 'task title')
- */
-export default async (title: string) => {
-   const created_at = new Date(Date.now())
-   const query = 'insert into tasks values (DEFAULT, ?, ?, ?)'  
-   const createdTask: any = await connection.execute(query, [title, 'pendente', created_at]) 
-   
-   return {taskId: createdTask[0].insertId, created_at}
-}
+type NewTask = {
+  name: string;
+  status?: string;
+};
+
+
+const createTask = async ({
+  name,
+  status,
+}: NewTask): Promise<Error | CreatedTask> => {
+  const task = await prisma.tasks.create({ data: { name, status } });
+
+  if (task instanceof Error) {
+    return new Error("Database Error");
+  }
+
+  return task;
+};
+
+export { createTask, CreatedTask };

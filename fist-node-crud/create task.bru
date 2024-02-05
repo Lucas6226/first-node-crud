@@ -1,0 +1,17 @@
+meta {
+  name: create task
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/tasks
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "estudar sass"
+  }
+}

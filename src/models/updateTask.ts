@@ -1,6 +1,15 @@
-import connection from "./connection";
+import { prisma } from "../database/prismaClient";
+import { CreatedTask } from "./types";
 
-export default async (datas: {id: string, status: string}) => {
-   const query = 'update tasks set status = ? where id = ?'
-   const update: any = await connection.execute(query, [datas.status, datas.id])
-}
+type UpDataInfos = {
+  id: string;
+  status: string;
+};
+
+export default async ({id, status}: UpDataInfos): Promise<ReferenceError | CreatedTask> => {
+  let task = await prisma.tasks.update({ where: { id }, data: { status } });
+  if (task instanceof Error) {
+    return ReferenceError("Database Error");
+  }
+  return task;
+};

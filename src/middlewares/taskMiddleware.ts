@@ -1,18 +1,32 @@
-export default {
-   validateBody: (req: any, res: any, next: any) => {
-      const validTitle = req.body.title == undefined || req.body.title == '' 
-      if (validTitle) {
-         return res.status(400).json({ msg: "invalid title" });
-      } 
+import { prisma } from "../database/prismaClient";
 
-      next()
-   },
-   validateStatus: (req: any, res: any, next: any) => {
-      const validStatus = req.body.newStatus == undefined || req.body.newStatus == ''
-      if (validStatus) {
-         return res.status(400).json({ msg: "valor invalido"})
-      }
+const validateBody = (req: any, res: any, next: any) => {
+   const validName = req.body.name == undefined || req.body.name == '' 
+   if (validName) {
+      return res.status(400).json({ msg: "invalid name" });
+   } 
 
-      next()
-   }
+   next()
 }
+const validateStatus = (req: any, res: any, next: any) => {
+   const validStatus = req.body.newStatus == undefined || req.body.newStatus == ''
+   if (validStatus) {
+      return res.status(400).json({ msg: "valor invalido"})
+   }
+
+   next()
+}
+const validateId = async (req: any, res: any, next: any) => {
+   const exist = await prisma.tasks.findUnique({ where: { id: req.params.id }})
+   if (exist == null) {
+      return res.status(300).json({ msg: "Invalid ID"})
+   }
+
+   if (exist instanceof Error) {
+      return res.status(400).json({msg: "internal server erro"}) 
+   }
+
+   next()
+}
+
+export {validateBody, validateStatus, validateId}
