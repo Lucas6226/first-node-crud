@@ -1,21 +1,19 @@
-import express from 'express';
+import express from "express";
 
-
-import createTask from "./controllers/createTask";
-import deleteTask from './controllers/deleteTask';
-import getAllTasks from "./controllers/getAllTasks";
-import updateTask from './controllers/updateTask';
-
-import {validateBody, validateStatus, validateId} from './middlewares/taskMiddleware';
+import { createTaskController } from "./controllers/createTask";
+import { deleteTaskController } from "./controllers/deleteTask";
+import { getAllTasksController } from "./controllers/getAllTasks";
+import { updateTaskController } from "./controllers/updateTask";
 
 const router = express.Router();
-router.get('/', (req, res) => {res.status(200).send('Home')});
+router.get("/", (req, res) => {
+  res.status(200).send("Home");
+});
 
 
-router.get('/tasks', getAllTasks)
-router.post('/tasks', validateBody, createTask)
-router.put('/tasks/:id', validateStatus, validateId, updateTask)
-router.delete('/tasks/:id', validateId, deleteTask)
-
+router.get("/tasks", (req, res, next) => new getAllTasksController().handle(req, res, next));
+router.post("/tasks", (req, res, next) => new createTaskController().handle(req, res, next));
+router.put("/tasks/:id", (req, res, next) => new updateTaskController().handle(req, res, next));
+router.delete("/tasks/:id", (req, res, next) => new deleteTaskController().handle(req, res, next));
 
 export default router;

@@ -1,13 +1,30 @@
-import deleteTask from "../models/deleteTask"
+import { DefaultModelInterface } from "../models/DefaultModelInterface"
+import { deleteTask } from "../models/deleteTask"
+import { DefaultControllerClass } from "./DefaultControllerClass"
 
-export default async (req: any, res: any) => {
-   const deleted = await deleteTask(req.params.id)
-
-   if (deleted instanceof Error) {
-      return deleted.message == "Database error"?
-         res.status(404).json({ msg: "Internal server error"}):
-         res.status(300).json({ msg: deleted.message })
+class deleteTaskController extends DefaultControllerClass {
+   constructor(x: DefaultModelInterface = new deleteTask()) {
+      super(x)
    }
-   
-   return res.status(201).json({ msg: `success, delete task:`, deleted})
+
+   async handle(req: any, res: any, next: any) {
+      try {
+         await this.DBaccess.handle({id: req.params.id});
+         return res.status(201).send()
+      } catch (err) {
+         next(err)
+      }   
+   }
 }
+
+export { deleteTaskController} 
+
+// export default async (req: any, res: any, next: any) => {
+//    try {
+//       const access = new deleteTask()
+//       await access.handle({ id: req.params.id})
+//       return res.status(201).send()
+//    } catch (err) {
+//       next(err)
+//    }
+// }

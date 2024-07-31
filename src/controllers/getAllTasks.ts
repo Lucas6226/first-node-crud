@@ -1,11 +1,20 @@
-import getAllTasks from "../models/getAllTasks"
+import { DefaultModelInterface } from "../models/DefaultModelInterface";
+import { getAllTasks } from "../models/getAllTasks";
+import { DefaultControllerClass } from "./DefaultControllerClass";
 
-export default async (req: any, res: any) => {
-   const tasks = await getAllTasks()
+class getAllTasksController extends DefaultControllerClass {
+  constructor(x: DefaultModelInterface = new getAllTasks()) {
+    super(x)
+  }
 
-   if (tasks instanceof Error) {
-      return res.status(400).json({ msg: "internal server errro"})
-   }
-   
-   return res.status(200).json(tasks)
+  async handle(req: any, res: any, next: any) {
+    try {
+      const tasks = await this.DBaccess.handle();
+      return res.status(200).json(tasks);
+    } catch (err) {
+      next(err);
+    }  
+  }
 }
+
+export { getAllTasksController }
